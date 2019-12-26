@@ -1,100 +1,19 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var init = require('init');
+var show = require('show');
+var auto = require('auto');
 
 
 module.exports.loop = function () {
     // 初始化整张地图
     var thisRoomName = 'sim'
     const visual = new RoomVisual(thisRoomName);
-    if(typeof Memory.map == 'undefined') {
-        Memory.map = {};
-    }
-    for(var roomName in Game.rooms) {
-        if(typeof Memory.map[roomName] == 'undefined') {
-            Memory.map[roomName] = {};
-        }
-        for(var x = 0; x < 50; x++) {
-            if(Memory.map[roomName] == null) Memory.map[roomName] = {};
-
-            if(Memory.map[roomName][x] == null) {
-                Memory.map[roomName][x] = {};
-            }
-            for(var y = 0; y < 50; y++){
-                if(Memory.map[roomName][x][y] == null) {
-                     Memory.map[roomName][x][y] = {'passTimes':0};
-                }
-                if(Memory.map[roomName][x][y].passTimes > 10) {
-                    visual.text(Memory.map[roomName][x][y].passTimes, x, y + 0.1, {size:0.2,opacity: 0.2});
-                }
-                // 如果有建造extension的期望的话，显示一个字母e
-                if(Memory.map[roomName][x][y].wish == 'extension') {
-                    visual.text('e', x, y + 0.3, {size:1,opacity: 0.3});
-                    Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_EXTENSION);
-
-                }
-                // 如果有建造tower的期望的话，显示一个字母e
-                if(Memory.map[roomName][x][y].wish == 'tower') {
-                    visual.text('t', x, y + 0.3, {size:1,opacity: 0.3});
-                    Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_TOWER);
-
-                }
-                // 如果建造成功，清楚期望
-                if(Memory.map[roomName][x][y].type == 'structure') {
-                    Memory.map[roomName][x][y].wish = '';
-                }
-                
-            }
-        }
-        var structures = Game.rooms[roomName].find(FIND_STRUCTURES);
-        for (var i in structures) {
-            var structure = structures[i];
-            Memory.map[roomName][structure.pos.x][structure.pos.y].type = 'structure';
-            Memory.map[roomName][structure.pos.x][structure.pos.y].subType = structure.structureType;
-        }
-        var flags = Game.rooms[roomName].find(FIND_FLAGS);
-        for (var i in flags) {
-            var flag = flags[i];
-            //console.log(flag.name);
-            if(flag.name == 'extension') {
-                Memory.map[roomName][flag.pos.x][flag.pos.y].wish = STRUCTURE_EXTENSION;
-                console.log(flag.name);
-            }
-            // 建造塔
-            if(flag.name == 'tower') {
-                Memory.map[roomName][flag.pos.x][flag.pos.y].wish = STRUCTURE_TOWER;
-                console.log(flag.name);
-            }
-        }
-    }
-
-    //         if(typeof Memory.map == 'undefined') Memory.map = [];
-    //         if(typeof Memory.map[i] == 'undefined' || Memory.map[i] == null) {
-    //             Memory.map[i] = [];
-    //         }
-    //         for(var j = 0; j < 50; j++) {
-    //             if(Memory.map[i][j] == null) {
-    //                 Memory.map[i][j] = {};
-    //             }
-    //             var x = i;
-    //             var y = j;
-    //             if(Memory.map[x][y] > 50) {
-    //                 visual.text('*', x, y, {size:0.2,opacity: 0.8});
-    //             }
-    //             if(Memory.map[x][y] > 100) {
-                    
-                    
-    //                 visual.text('*', x, y, {size:1,opacity: 0.8});
-    //                 Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_ROAD);
-    //             }
-    //         }
-    //     }        
-    // }
-    
-
-
-
-    
+    init.map();
+    init.structure();
+    show.map(thisRoomName);
+    auto.flagToWish();
 
     // 遍历每一个creep
     for(var name in Memory.creeps) {
