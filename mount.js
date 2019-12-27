@@ -19,16 +19,30 @@ var oneConfig = function(){
 var config = function(){
     Memory.number = {
         "harvester" :{max : 3, need : {WORK:2, CARRY:2, MOVE:2}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length},
-        "upgrader" : {max : 3, need : {WORK:2, CARRY:2, MOVE:2}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader').length},
-        "builder" :  {max : 1, need : {WORK:2, CARRY:2, MOVE:2}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'builder').length},
+        "upgrader" : {max : 6, need : {WORK:2, CARRY:2, MOVE:2}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader').length},
+        "builder" :  {max : 6, need : {WORK:2, CARRY:2, MOVE:2}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'builder').length},
         "transfer" : {max : 0, need : {CARRY:14, MOVE:7}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'transfer').length},
         "repairer" : {max : 0, need : {WORK:2, CARRY:2, MOVE:2}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer').length},
         "explorer" : {max : 0, need : {TOUGH:2,CARRY:11, MOVE:6, WORK:4,ATTACK:1}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'explorer').length},
         "attacker" : {max : 0, need : {TOUGH:10, MOVE:4, ATTACK:4}, now : _.filter(Game.creeps, (creep) => creep.memory.role == 'attacker').length},
     };
-    if(Memory.number.harvester.now < 1) {
-        Memory.number.harvester.need = {WORK:1, CARRY:1, MOVE:1};
+    // 自动装配身体
+
+    var energy = Game.rooms[Memory.spawn.home].energyAvailable;
+    // builder
+    if(energy - 200 >= 100) {
+        Memory.number.builder.need = {WORK:parseInt((energy - 200) / 100), CARRY:2, MOVE:2};
     }
+    // upgrader
+    if(energy - 200 >= 100) {
+        Memory.number.upgrader.need = {WORK:parseInt((energy - 200) / 100), CARRY:2, MOVE:2};
+    }
+    // harvester
+    if(energy - 200 >= 100) {
+        Memory.number.harvester.need = {WORK:parseInt((energy - 200) / 100), CARRY:2, MOVE:2};
+    }
+    
+    
 }
 
 // 挂载所有的额外属性和方法

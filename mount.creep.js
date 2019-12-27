@@ -1,6 +1,38 @@
 // 将拓展签入 Creep 原型
 module.exports = function () {
-    _.assign(Creep.prototype, creepExtension)
+    _.assign(Creep.prototype, creepExtension);
+
+    if (!Creep.prototype._moveTo) {
+        Creep.prototype._moveTo = Creep.prototype.moveTo;
+        Creep.prototype.moveTo = function(...myArgumentsArray) {
+            //console.log(`My moveTo using rest parameters!`);
+            //console.log(this.pos.x);
+            //let startCpu = Game.cpu.getUsed();
+            var pos = this.pos;
+            var room = this.room;
+            if(typeof this.memory.lastPos == 'undefined') {
+                this.memory.lastPos = pos;
+            }
+            if(pos.x != this.memory.lastPos.x && pos.y != this.memory.lastPos.y) {
+                Memory.map[room.name][pos.x][pos.y].passTimes++;
+            }
+            this.memory.lastPos = pos;
+            //console.log(this.lastPos);
+            let returnValue = this._moveTo.apply(this, myArgumentsArray);
+            //let endCpu = Game.cpu.getUsed();
+       
+            //let used = endCpu - startCpu;
+       
+            //if (!this.memory.moveToCPU) this.memory.moveToCPU = 0;
+       
+            //this.memory.moveToCPU += used;
+       
+            return returnValue;
+        };
+       }
+
+
+
 }
 
 // 自定义的 Creep 的拓展
@@ -136,7 +168,6 @@ const creepExtension = {
     },
     // 从Souorce中获取能量
     getEnergyFromSource() {
-        this.say("挖矿2");
         var sources = this.pos.findClosestByPath(FIND_SOURCES, {
             filter:(source) => {
                 return source.energy > 0;
@@ -274,4 +305,4 @@ const creepExtension = {
         return false;
     }
 
-}
+};

@@ -35,7 +35,7 @@ module.exports.loop = function () {
                 console.log(`由${creep.name}初始化map `,pos);
                 Memory.map[room.name][pos.x][pos.y] = {};
             }
-            Memory.map[room.name][pos.x][pos.y].passTimes++;
+            //Memory.map[room.name][pos.x][pos.y].passTimes++;
         }
     }
 

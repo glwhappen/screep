@@ -29,24 +29,33 @@ var init = {
                 Memory.map[roomName][structure.pos.x][structure.pos.y].type = 'structure';
                 Memory.map[roomName][structure.pos.x][structure.pos.y].subType = structure.structureType;
             }
+            // var structures_sites = Game.rooms[roomName].find();
+
         }
     },
+    // 初始化所有的sources资源
     source : function() {
         for(var roomName in Game.rooms) {
             var sources = Game.rooms[roomName].find(FIND_SOURCES);
             for(var i in sources) {
                 var source = sources[i];
-                console.log(source.ticksToRegeneration);
-                console.log(source.energy);
-                console.log(source.pos);
-                console.log(source.room);
+                // console.log(source.ticksToRegeneration);
+                // console.log(source.energy);
+                // console.log(source.pos);
+                // console.log(source.room);
                 const visual = new RoomVisual(roomName);
                 if(typeof Memory.source) {
-                    Memory.source = {source:{}};
+                    Memory.source = {};
                 }
-                
+                if(typeof Memory.source[source]){
+                    Memory.source[source] = {};
+                }
+                if(source.ticksToRegeneration < 10 || !source.ticksToRegeneration) {
+                    Memory.source[source].lastEnergy = source.energy;
+                }
 
                 visual.text(source.energy, source.pos.x + 0.3, source.pos.y, {align: 'left', size:0.3,opacity: 0.7});
+                visual.text(source.ticksToRegeneration, source.pos.x + 0.3, source.pos.y + 0.3, {align: 'left', size:0.3,opacity: 0.7});
             }
         }
     }

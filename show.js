@@ -12,8 +12,13 @@ var show = {
         for(var roomName in Game.rooms) {
             for(var x = 0; x < 50; x++) {
                 for(var y = 0; y < 50; y++){
-                    if(Memory.map[roomName][x][y].passTimes > 10) {
+                    // 显示一个点被走过的次数
+                    if(Memory.map[roomName][x][y].passTimes > 1) {
                         visual.text(Memory.map[roomName][x][y].passTimes, x, y + 0.1, {size:0.2,opacity: 0.2});
+                    }
+                    // 如果建造成功，则不显示期望
+                    if(Memory.map[roomName][x][y].type == 'structure') {
+                        continue;
                     }
                     // 如果有建造extension的期望的话，显示一个字母e
                     if(Memory.map[roomName][x][y].wish == 'extension') {
@@ -24,13 +29,12 @@ var show = {
                     if(Memory.map[roomName][x][y].wish == 'tower') {
                         visual.text('t', x, y + 0.3, {size:1,opacity: 0.3});
                         Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_TOWER);
-    
                     }
-                    // 如果建造成功，清楚期望
-                    if(Memory.map[roomName][x][y].type == 'structure') {
-                        Memory.map[roomName][x][y].wish = '';
+                    // 如果有建造road的期望的话，显示一个字母r
+                    if(Memory.map[roomName][x][y].wish == 'road') {
+                        visual.text('r', x, y + 0.3, {size:1,opacity: 0.3});
+                        Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_ROAD);
                     }
-                    
                 }
             }
         }
