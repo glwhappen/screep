@@ -34,6 +34,27 @@ var show = {
                 }
             }
         }
+    },
+    /**
+     * 
+     * @param {房间名称} roomName 
+     * @param {显示位置} pos 
+     */
+    info : function(roomName, pos) {
+        const visual = new RoomVisual(roomName);
+        var x = pos.x;
+        var y = pos.y;
+		visual.text('状态显示', x, y, {align: 'left', size:0.7,opacity: 0.8});
+		visual.text('总能量:' + Game.rooms[roomName].energyAvailable, x, y + 1, {align: 'left', size:0.7,opacity: 0.8});
+		var roomList = "";
+		for(var name in Game.rooms) {
+			roomList += name + " ";
+		}
+		visual.text('控制房间:' + roomList, x, y + 2, {align: 'left', size:0.7,opacity: 0.8});
+		visual.text('harvester:' + Memory.number.harvester.now, x, y + 3, {align: 'left', size:0.7,opacity: 0.8});
+		visual.text('builder:' + Memory.number.builder.now, x, y + 4, {align: 'left', size:0.7,opacity: 0.8});
+		visual.text('upgrader:' + Memory.number.upgrader.now, x, y + 5, {align: 'left', size:0.7,opacity: 0.8});
     }
+
 }
 module.exports = show;

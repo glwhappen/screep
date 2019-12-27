@@ -4,15 +4,18 @@ var roleBuilder = require('role.builder');
 var init = require('init');
 var show = require('show');
 var auto = require('auto');
-
+var mount = require('mount');
+var fun = require('fun');
 
 module.exports.loop = function () {
-    // 初始化整张地图
+    mount();
     var thisRoomName = 'sim'
     const visual = new RoomVisual(thisRoomName);
     init.map();
     init.structure();
+    init.source();
     show.map(thisRoomName);
+    show.info(thisRoomName, {x:4, y:5});
     auto.flagToWish();
 
     // 遍历每一个creep
@@ -48,42 +51,9 @@ module.exports.loop = function () {
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
-    // console.log('Harvesters: ' + harvesters.length);
-
-    if(harvesters.length < 2) {
-        var newName = 'Harvester' + Game.time;
-        //console.log('Spawning new harvester: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName, 
-            {memory: {role: 'harvester'}});
-    }
-    if(builders.length < 3) {
-        var newName = 'builder' + Game.time;
-        //console.log('Spawning new builder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName,
-            {memory : {role: 'builder'}});
-    }
-    if(upgraders.length < 2) {
-        var newName = 'builder' + Game.time;
-        //console.log('Spawning new builder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName,
-            {memory : {role: 'upgrader'}});
-    }
     
-	{
-		var roomName = 'sim'
-		const visual = new RoomVisual(roomName);
-		visual.text('状态显示', 15, 14, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('总能量:' + Game.rooms[roomName].energyAvailable, 15, 15, {align: 'left', size:0.7,opacity: 0.8});
-		var roomList = "";
-		for(var name in Game.rooms) {
-			roomList += name + " ";
-		}
-		visual.text('控制房间:' + roomList, 15, 17, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('harvester:' + harvesters.length, 15, 18, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('builder:' + builders.length, 15, 19, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('upgrader:' + upgraders.length, 15, 20, {align: 'left', size:0.7,opacity: 0.8});
-	}
 
+    
     if(Game.spawns['Spawn1'].spawning) { 
         var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
         Game.spawns['Spawn1'].room.visual.text(
@@ -92,6 +62,16 @@ module.exports.loop = function () {
             Game.spawns['Spawn1'].pos.y, 
             {align: 'left', opacity: 0.8});
     }
+
+
+    for(var role in Memory.number){
+        var create = Memory.number[role];
+        if(create.now < create.max) {
+            //console.log(create["max"] + " " + role);
+            fun.createCreep(create.need, {"role":role});
+        }
+    }
+
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];

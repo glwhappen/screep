@@ -30,8 +30,26 @@ var init = {
                 Memory.map[roomName][structure.pos.x][structure.pos.y].subType = structure.structureType;
             }
         }
-    }
+    },
+    source : function() {
+        for(var roomName in Game.rooms) {
+            var sources = Game.rooms[roomName].find(FIND_SOURCES);
+            for(var i in sources) {
+                var source = sources[i];
+                console.log(source.ticksToRegeneration);
+                console.log(source.energy);
+                console.log(source.pos);
+                console.log(source.room);
+                const visual = new RoomVisual(roomName);
+                if(typeof Memory.source) {
+                    Memory.source = {source:{}};
+                }
+                
 
+                visual.text(source.energy, source.pos.x + 0.3, source.pos.y, {align: 'left', size:0.3,opacity: 0.7});
+            }
+        }
+    }
 
 
 }
