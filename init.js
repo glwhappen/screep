@@ -44,18 +44,20 @@ var init = {
                 // console.log(source.pos);
                 // console.log(source.room);
                 const visual = new RoomVisual(roomName);
-                if(typeof Memory.source) {
+                if(typeof Memory.source == 'undefined') {
                     Memory.source = {};
                 }
-                if(typeof Memory.source[source]){
+                if(typeof Memory.source[source] == 'undefined'){
                     Memory.source[source] = {};
                 }
-                if(source.ticksToRegeneration < 10 || !source.ticksToRegeneration) {
+                if(source.ticksToRegeneration < 10) {
                     Memory.source[source].lastEnergy = source.energy;
+                    //console.log("lastEnergy", Memory.source[source].lastEnergy);
                 }
 
                 visual.text(source.energy, source.pos.x + 0.3, source.pos.y, {align: 'left', size:0.3,opacity: 0.7});
                 visual.text(source.ticksToRegeneration, source.pos.x + 0.3, source.pos.y + 0.3, {align: 'left', size:0.3,opacity: 0.7});
+                visual.text(Memory.source[source].lastEnergy, source.pos.x + 0.3, source.pos.y + 0.6, {align: 'left', size:0.3,opacity: 0.7});
             }
         }
     }

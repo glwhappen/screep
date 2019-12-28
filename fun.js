@@ -30,10 +30,19 @@ var fun = {
                 need.push(i.toLowerCase());
             }
         }
+        var ret = Game.spawns[data.spawn].canCreateCreep(need);
         if(Game.spawns[data.spawn].canCreateCreep(need) == 0) {
-            Game.spawns[data.spawn].spawnCreep(need, newName + "_" + getCnt(need), {memory: {"role": data.role, value: getCnt(need), beginTime: Game.time,id : Memory[data.role + "Id"]}});
+            Game.spawns[data.spawn].spawnCreep(need, newName + "_" + getCnt(need), {memory: {
+                "role": data.role, 
+                value: getCnt(need), 
+                beginTime: Game.time,
+                "body" : body,
+                id : Memory[data.role + "Id"]
+            }});
+            
             Memory[data.role + "Id"]++;
         }
+        return ret;
     }
 };
 module.exports = fun;

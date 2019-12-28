@@ -1,23 +1,25 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var roleRepairer = require('role.repairer');
 var init = require('init');
 var show = require('show');
 var auto = require('auto');
 var mount = require('mount');
 var fun = require('fun');
+var update = require('update');
 
 module.exports.loop = function () {
     mount();
-    var thisRoomName = 'sim'
+    var thisRoomName = 'W5N8'
     const visual = new RoomVisual(thisRoomName);
     init.map();
     init.structure();
     init.source();
+    update.map();
     show.map(thisRoomName);
-    show.info(thisRoomName, {x:4, y:5});
+    show.info(thisRoomName, {x:30, y:5});
     auto.flagToWish();
-
     // 遍历每一个creep
     for(var name in Memory.creeps) {
         var creep = Game.creeps[name];
@@ -52,8 +54,14 @@ module.exports.loop = function () {
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
     
+    // var roadsites = Game.spawns['Spawns1'].find(FIND_CONSTRUCTION_SITES, {
+    //     filter: (structure) => {
+    //         return (structure.structureType == STRUCTURE_ROAD);
+    //     }
+    // });
+    // console.log(roadsites.length);
 
-    
+
     if(Game.spawns['Spawn1'].spawning) { 
         var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
         Game.spawns['Spawn1'].room.visual.text(
@@ -68,11 +76,13 @@ module.exports.loop = function () {
         var create = Memory.number[role];
         if(create.now < create.max) {
             //console.log(create["max"] + " " + role);
-            fun.createCreep(create.need, {"role":role});
+            var ret = fun.createCreep(create.need, {"role":role});
+            if(ret == 0) {
+                // 如果这一次可以建造了，那么先跳过
+                break;
+            }
         }
     }
-
-
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
@@ -83,6 +93,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
+        }
+        if(creep.memory.role == 'repairer') {
+            roleRepairer.run(creep);
         }
     }
 }

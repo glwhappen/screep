@@ -16,18 +16,24 @@ var auto = {
                 // 建造扩展
                 if(flag.name == 'extension' || flag.name == 'e') {
                     Memory.map[roomName][flag.pos.x][flag.pos.y].wish = STRUCTURE_EXTENSION;
-                    console.log(flag.name);
                 }
                 // 建造塔
                 if(flag.name == 'tower' || flag.name == 't') {
                     Memory.map[roomName][flag.pos.x][flag.pos.y].wish = STRUCTURE_TOWER;
-                    console.log(flag.name);
                 }
                 //建造道路
                 if(flag.name == 'road' || flag.name == 'r') {
                     Memory.map[roomName][flag.pos.x][flag.pos.y].wish = STRUCTURE_ROAD;
-                    consolg.log(flag.name);
                 }
+                // 建造Container
+                // console.log("sdf" + flag.name = 'container' || flag.name == 'c');
+                if(flag.name == 'container' || flag.name == 'c') {
+                    Memory.map[roomName][flag.pos.x][flag.pos.y].wish = STRUCTURE_CONTAINER;
+                }
+                if(flag.name == 'clear') {
+                     Memory.map[roomName][flag.pos.x][flag.pos.y].wish = "";
+                }
+                
             }
         }
     }

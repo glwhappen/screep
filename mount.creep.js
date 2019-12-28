@@ -44,6 +44,19 @@ const creepExtension = {
     checkBuild() {
         this.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
     },
+    checkRepair() {
+        var targets = this.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: object => (object.hits / object.hitsMax) < 0.9
+        });
+        //console.log("checkRepair:",targets);
+
+        if(targets) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    ,
     // 填充所有 spawn 和 extension
     fillSpawnEngry() { 
         this.say("填充Spawn和extension");

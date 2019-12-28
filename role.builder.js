@@ -12,11 +12,12 @@ var roleBuilder = {
 	        creep.say('🚧 build');
 	    }
 
+		
 	    if(creep.memory.building) {
 			// 建造
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(targets.length) {
-                console.log(targets[0].structureType);
+				// console.log(targets[0].structureType);
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }
@@ -24,7 +25,7 @@ var roleBuilder = {
 	    }
 	    else {
 			// 挖矿
-	        creep.getEnergyFromSource();
+			creep.getEnergyFromSource();
 	    }
 	}
 };

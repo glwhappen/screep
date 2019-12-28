@@ -1,10 +1,6 @@
-/*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports.thing = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('show');
- * mod.thing == 'a thing'; // true
+/**
+ * 本类用来在屏幕上显示各种内容
+ * 
  */
 var show = {
     map : function(showRoom) {
@@ -23,17 +19,18 @@ var show = {
                     // 如果有建造extension的期望的话，显示一个字母e
                     if(Memory.map[roomName][x][y].wish == 'extension') {
                         visual.text('e', x, y + 0.3, {size:1,opacity: 0.3});
-                        Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_EXTENSION);
                     }
                     // 如果有建造tower的期望的话，显示一个字母e
                     if(Memory.map[roomName][x][y].wish == 'tower') {
                         visual.text('t', x, y + 0.3, {size:1,opacity: 0.3});
-                        Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_TOWER);
                     }
                     // 如果有建造road的期望的话，显示一个字母r
                     if(Memory.map[roomName][x][y].wish == 'road') {
                         visual.text('r', x, y + 0.3, {size:1,opacity: 0.3});
-                        Game.spawns['Spawn1'].room.createConstructionSite(x, y, STRUCTURE_ROAD);
+                    }
+                    // 如果有建造container的期望的话，显示一个字母c
+                    if(Memory.map[roomName][x][y].wish == STRUCTURE_CONTAINER) {
+                        visual.text('c', x, y + 0.3, {size:1,opacity: 0.3});
                     }
                 }
             }
@@ -48,16 +45,31 @@ var show = {
         const visual = new RoomVisual(roomName);
         var x = pos.x;
         var y = pos.y;
-		visual.text('状态显示', x, y, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('总能量:' + Game.rooms[roomName].energyAvailable, x, y + 1, {align: 'left', size:0.7,opacity: 0.8});
+        var msg = [];
+        msg.push('状态显示');
+        msg.push('总能量:' + Game.rooms[roomName].energyAvailable);
 		var roomList = "";
 		for(var name in Game.rooms) {
 			roomList += name + " ";
 		}
-		visual.text('控制房间:' + roomList, x, y + 2, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('harvester:' + Memory.number.harvester.now, x, y + 3, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('builder:' + Memory.number.builder.now, x, y + 4, {align: 'left', size:0.7,opacity: 0.8});
-		visual.text('upgrader:' + Memory.number.upgrader.now, x, y + 5, {align: 'left', size:0.7,opacity: 0.8});
+		msg.push('控制房间:' + roomList)
+		// 显示所有creep的数量
+		for(var role in Memory.number){
+            var create = Memory.number[role];
+            var str = role + ' : [now :' + create.now + ', max : '  + create.max+ ']';
+            msg.push(str);
+        }
+        msg.push('工地数量:' + Memory.sites.length);
+        msg.push('下一个建造road的最小值:' + Memory.limitPassTimes + "当前队列数量:" + Memory.limitCnt);
+        msg.push('当前急需修理的物品数量:' + Memory.needRepair.length);
+        //for(var name in Memory.needRepair) {
+        //    console.log(Memory.needRepair[name].structureType, Memory.needRepair[name].hits / Memory.needRepair[name].hitsMax < 0.3);
+        //}
+
+		// 显示所有信息
+		for(var i in msg) {
+		    visual.text(msg[i], x, y++, {align: 'left', size:0.7,opacity: 0.8});
+        }
     }
 
 }
