@@ -11,29 +11,30 @@ var roleTransfer = {
         }
         //console.log(Creep.prototype.target_id);
         if(!creep.memory.transfing) {
-            if(Memory.containersUsedPercentage < 0.3) {
-                creep.getEnergyFromStorages();
-            } else {
-                if(!creep.getEnergyFromDrop()){
-                    creep.getEnergyFromContainer(Memory.container.upgrader);
-                }
-            }
+			// 获取能量
+			if(creep.checkCloseSourceContainerEnergy(true)) { // 检查container
+				creep.getContainerEnergy();
+			} else {
+			    
+			}
         }
         else {
-            if(!creep.fillSpawnEngry()) {
-                if(!creep.fillTower()){
-                    
-                    if(!creep.fillStructureById(Memory.container.upgrader)){
-                        if(Memory.containersUsedPercentage > 0.4) {
-                            if(!creep.fillStorages()) {
-                                // 如果Storages都满了，就休息吧
-                                // creep.moveTo(Memory.waitPos.transfer);
-                                creep.wait();
-                            }
-                        } 
+            if(creep.checkSpawnEnergy()) {
+                creep.fillSpawnEnergy();
+            } else {
+                if(creep.checkTowerEnergy()) {
+                    creep.say("tawer");
+                    creep.fillTowerEnergy();
+                } else {
+                    // 填充升级container的能量
+                    if(creep.checkCloseControllerContainerEnergy()) {
+                        creep.fillContainerEnergy();
+                    }else {
+
                     }
-                }
+                } 
             }
+
         }
             
     }

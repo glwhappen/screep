@@ -2,6 +2,8 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
+var roleTransfer = require('role.transfer');
+var structureTower = require('structure.tower');
 var init = require('init');
 var show = require('show');
 var auto = require('auto');
@@ -9,17 +11,43 @@ var mount = require('mount');
 var fun = require('fun');
 var update = require('update');
 
+
+var Lock = /** @class */ (function () {
+    function Lock() {
+    }
+    Lock.config = true;
+    return Lock;
+}());
+
 module.exports.loop = function () {
+        if (Lock.config) {
+        console.log("初始化一次");
+        Lock.config = false;
+    }
+    
     mount();
     var thisRoomName = 'W5N8'
     const visual = new RoomVisual(thisRoomName);
-    init.map();
-    init.structure();
-    init.source();
-    update.map();
-    show.map(thisRoomName);
-    show.info(thisRoomName, {x:30, y:5});
+    
+    if(Game.time % 1000 == 0) {
+        init.map();
+        init.structure();
+        init.source();
+        init.container();   
+    }
+    
+    if(Game.time % 100 == 0) {
+        update.map();
+    }
+    
+    
+    // show.map(thisRoomName);
+     // show.info(thisRoomName, {x:30, y:5});
+    
     auto.flagToWish();
+    
+    structureTower.run();
+    
     // 遍历每一个creep
     for(var name in Memory.creeps) {
         var creep = Game.creeps[name];
@@ -75,8 +103,9 @@ module.exports.loop = function () {
     for(var role in Memory.number){
         var create = Memory.number[role];
         if(create.now < create.max) {
-            //console.log(create["max"] + " " + role);
+            // console.log(create["max"] + " " + role);
             var ret = fun.createCreep(create.need, {"role":role});
+            // console.log(ret);
             if(ret == 0) {
                 // 如果这一次可以建造了，那么先跳过
                 break;
@@ -96,6 +125,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'repairer') {
             roleRepairer.run(creep);
+        }
+        if(creep.memory.role == 'transfer') {
+            roleTransfer.run(creep);
         }
     }
 }

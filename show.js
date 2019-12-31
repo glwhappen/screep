@@ -62,6 +62,7 @@ var show = {
         msg.push('工地数量:' + Memory.sites.length);
         msg.push('下一个建造road的最小值:' + Memory.limitPassTimes + "当前队列数量:" + Memory.limitCnt);
         msg.push('当前急需修理的物品数量:' + Memory.needRepair.length);
+        msg.push('传送模式:' + Memory.transferMode);
         //for(var name in Memory.needRepair) {
         //    console.log(Memory.needRepair[name].structureType, Memory.needRepair[name].hits / Memory.needRepair[name].hitsMax < 0.3);
         //}

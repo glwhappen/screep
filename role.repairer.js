@@ -11,7 +11,14 @@ var roleRepairer = {
         }
         
         if(!creep.memory.Repairering) {
-            creep.getEnergyFromSource();
+			// 获取能量
+			if(creep.checkCloseSourceContainerEnergy(true)) { // 检查container
+				creep.getContainerEnergy();
+			} else {
+				if(creep.checkSourceEnergy()) { // 直接挖矿
+					creep.getSourceEnergy();
+				}
+			}
         }
         else {
             if(creep.checkRepair()) {

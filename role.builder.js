@@ -14,18 +14,32 @@ var roleBuilder = {
 
 		
 	    if(creep.memory.building) {
-			// 建造
-	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(targets.length) {
-				// console.log(targets[0].structureType);
-                if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-            }
+			// 工作
+			if(creep.checkBuild()) {
+				creep.toBuild();
+				creep.memory.notBuild = false;
+			} else {
+				if(creep.checkRepair()) {
+					creep.toRepair();
+					creep.memory.notBuild = false;
+				} else {
+				    if(creep.checkCloseSourceContainerEnergy()) {
+                        creep.fillContainerEnergy();
+                        creep.memory.notBuild = true;
+                    }
+				}
+			}
+			
 	    }
 	    else {
-			// 挖矿
-			creep.getEnergyFromSource();
+			// 获取能量
+			if(!creep.memory.notBuild && creep.checkCloseSourceContainerEnergy(true)) { // 检查container
+				creep.getContainerEnergy();
+			} else {
+				if(creep.checkSourceEnergy()) { // 直接挖矿
+					creep.getSourceEnergy();
+				}
+			}
 	    }
 	}
 };

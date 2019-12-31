@@ -18,7 +18,15 @@ var roleUpgrader = {
             }
         }
         else {
-            creep.getEnergyFromSource();
+            if(creep.checkCloseControllerContainerEnergy(true)) {
+                console.log("update直接从container中获取能量");
+                creep.getContainerEnergy();
+            } else {
+                if(creep.checkSourceEnergy()) {
+                //    creep.getSourceEnergy();
+                }
+            }
+
         }
 	}
 };

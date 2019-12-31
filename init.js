@@ -36,29 +36,75 @@ var init = {
     // 初始化所有的sources资源
     source : function() {
         for(var roomName in Game.rooms) {
+            const visual = new RoomVisual(roomName);
             var sources = Game.rooms[roomName].find(FIND_SOURCES);
             for(var i in sources) {
                 var source = sources[i];
-                // console.log(source.ticksToRegeneration);
-                // console.log(source.energy);
-                // console.log(source.pos);
-                // console.log(source.room);
-                const visual = new RoomVisual(roomName);
                 if(typeof Memory.source == 'undefined') {
                     Memory.source = {};
                 }
-                if(typeof Memory.source[source] == 'undefined'){
-                    Memory.source[source] = {};
+                if(typeof Memory.source[roomName] == 'undefined') {
+                    Memory.source[roomName] = {};
+                }
+                if(typeof Memory.source[roomName][source] == 'undefined'){
+                    Memory.source[roomName][source] = {};
                 }
                 if(source.ticksToRegeneration < 10) {
-                    Memory.source[source].lastEnergy = source.energy;
+                    Memory.source[roomName][source].lastEnergy = source.energy;
                     //console.log("lastEnergy", Memory.source[source].lastEnergy);
                 }
-
+                Memory.map[roomName][source.pos.x][source.pos.y].type = 'source';
+                Memory.map[roomName][source.pos.x][source.pos.y].id = source.id;
                 visual.text(source.energy, source.pos.x + 0.3, source.pos.y, {align: 'left', size:0.3,opacity: 0.7});
                 visual.text(source.ticksToRegeneration, source.pos.x + 0.3, source.pos.y + 0.3, {align: 'left', size:0.3,opacity: 0.7});
-                visual.text(Memory.source[source].lastEnergy, source.pos.x + 0.3, source.pos.y + 0.6, {align: 'left', size:0.3,opacity: 0.7});
+                visual.text(Memory.source[roomName][source].lastEnergy, source.pos.x + 0.3, source.pos.y + 0.6, {align: 'left', size:0.3,opacity: 0.7});
             }
+        }
+    },
+    container : function() {
+        for(var roomName in Game.rooms) {
+            const visual = new RoomVisual(roomName);
+            var containers = Game.rooms[roomName].find(FIND_STRUCTURES,{
+                filter : (structure) => {
+                    return structure.structureType == 'container';
+                }
+            })
+            for(var i in containers) {
+                var container = containers[i];
+                if(typeof Memory.container == 'undefined') {
+                    Memory.container = {};
+                }
+                if(typeof Memory.container[roomName] == 'undefined') {
+                    Memory.container[roomName] = {};
+                }
+                if(typeof Memory.container[roomName][container.id] == 'undefined') {
+                    Memory.container[roomName][container.id] = {};
+                }
+                // container.find(FIND_SOURCES);
+                for(var j = -2; j < 2; j++) {
+                    for(var k = -2; k < 2; k++) {
+                        var ans = Memory.map[roomName][container.pos.x + j][container.pos.y + k].type;
+                        if(ans == 'source') {
+                            Memory.container[roomName][container.id].closeSource = true;
+                            //container.memory.closeSource = true;
+                        }
+                    }
+                }
+                for(var j = -4; j < 4; j++) {
+                    for(var k = -4; k < 4; k++) {
+                        var ans = Memory.map[roomName][container.pos.x + j][container.pos.y + k].subType;
+                        if(ans == 'controller') {
+                            Memory.container[roomName][container.id].closeController = true;
+                            //container.memory.closeController = true;
+                            //console.log(container.closeController);
+                            //container.memory.closeController = true;
+                        }
+                    }
+                }
+                
+            }
+
+
         }
     }
 
